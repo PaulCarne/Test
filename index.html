@@ -76,8 +76,9 @@
             left: -100%;
         }
 
-        input[type="checkbox"]:checked + .playButton .icon {
-            transform: rotate(90deg);
+        input[type="checkbox"]:checked + .playButton {
+            --ry: 180deg;
+            --clr: maroon;
         }
 
         .playButton {
@@ -87,7 +88,7 @@
             width: 80px;
             height: 80px;
             border-radius: 50%;
-            background-color: red;
+            background-color: var(--clr, red);
             perspective: 320px;
             cursor: pointer;
             margin: 1em auto;
@@ -101,7 +102,7 @@
             left: 50%;
             width: 40px;
             height: 40px;
-            transform: rotate(0deg);
+            transform: rotateY(var(--ry, 0deg));
             transform-style: preserve-3d;
             transition: transform 0.5s;
             display: flex;
@@ -124,9 +125,9 @@
 
         .icon div:nth-child(2),
         .icon div:nth-child(4) {
-            border-width: 20px 0 20px 30px;
-            border-color: transparent transparent transparent #fff;
-            transform: translateX(-30px);
+            border-width: 20px 30px 20px 0;
+            border-color: transparent #fff transparent transparent;
+            transform: translateX(-60px);
         }
     </style>
 </head>
