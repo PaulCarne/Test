@@ -70,10 +70,6 @@
             height: 50px;
             fill: red;
         }
-        #large-play-button svg {
-            width: 80px;
-            height: 80px;
-        }
     </style>
 </head>
 <body>
@@ -88,12 +84,7 @@
                 <rect x="14" y="4" width="4" height="16"></rect>
             </svg>
         </button>
-        <button id="start-button" class="control-button" onclick="startVideo()">
-            <svg viewBox="0 0 24 24">
-                <polygon points="6,4 20,12 6,20"></polygon>
-            </svg>
-        </button>
-        <button id="large-play-button" class="control-button" onclick="startVideo()">
+        <button id="start-button" class="control-button" onclick="startVideo()" style="display: none;">
             <svg viewBox="0 0 24 24">
                 <polygon points="6,4 20,12 6,20"></polygon>
             </svg>
@@ -140,7 +131,6 @@
             player.unMute();
             videoStarted = true;
             document.getElementById('start-button').style.display = 'none';
-            document.getElementById('large-play-button').style.display = 'none';
         }
     </script>
     <script src="https://www.youtube.com/iframe_api"></script>
