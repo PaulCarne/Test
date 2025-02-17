@@ -111,7 +111,9 @@
         }
 
         function onPlayerStateChange(event) {
-            if (event.data === YT.PlayerState.PAUSED) {
+            if (event.data === YT.PlayerState.ENDED) {
+                window.location.href = "https://forms.office.com/r/75jdBjwfDw";
+            } else if (event.data === YT.PlayerState.PAUSED) {
                 document.getElementById('pause-icon').innerHTML = '<polygon points="6,4 20,12 6,20"></polygon>';
             } else if (event.data === YT.PlayerState.PLAYING) {
                 document.getElementById('pause-icon').innerHTML = '<rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>';
