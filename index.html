@@ -105,13 +105,13 @@
             transition: transform 0.5s;
         }
 
-        .icon.pause > div {
+        .icon > div {
             position: absolute;
             background-color: #fff;
         }
 
-        .icon.pause > div:nth-child(1),
-        .icon.pause > div:nth-child(2) {
+        .icon > div:nth-child(1),
+        .icon > div:nth-child(3) {
             top: -15px;
             left: -9px;
             width: 30px;
@@ -124,8 +124,8 @@
                 linear-gradient(90deg, #0005, #0000 7px);
         }
 
-        .icon.pause > div:nth-child(3),
-        .icon.pause > div:nth-child(4) {
+        .icon > div:nth-child(2),
+        .icon > div:nth-child(4) {
             top: -15px;
             left: -9px;
             width: 10px;
@@ -133,33 +133,6 @@
             transform-origin: left;
             transform: translateZ(-15px) rotateY(-90deg);
             box-shadow: 0 0 5px #0005 inset;
-        }
-
-        .icon.stop > div {
-            position: absolute;
-            background-color: #fff;
-        }
-
-        .icon.stop > div:nth-child(1),
-        .icon.stop > div:nth-child(2) {
-            top: -15px;
-            left: -9px;
-            width: 10px;
-            height: 30px;
-            transform-origin: left;
-            transform: translateZ(-5px);
-            background-color: #fff;
-        }
-
-        .icon.stop > div:nth-child(3),
-        .icon.stop > div:nth-child(4) {
-            top: -15px;
-            left: 5px;
-            width: 10px;
-            height: 30px;
-            transform-origin: left;
-            transform: translateZ(-5px);
-            background-color: #fff;
         }
     </style>
 </head>
