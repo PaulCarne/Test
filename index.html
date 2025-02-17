@@ -24,6 +24,18 @@
             width: 100%;
             height: 100%;
         }
+        #background {
+            z-index: 1;
+        }
+        #overlay-permanent {
+            background: transparent;
+            z-index: 4;
+        }
+        #overlay-paused {
+            display: none;
+            background: transparent;
+            z-index: 5;
+        }
         #content {
             position: relative;
             z-index: 2;
@@ -44,21 +56,21 @@
             border: none;
             z-index: 3;
         }
-        #pause-button, #start-button, #large-play-button {
+        .control-button {
             position: absolute;
             background: none;
             border: none;
             cursor: pointer;
             z-index: 6;
         }
-        svg {
+        .control-button svg {
             width: 50px;
             height: 50px;
             fill: red;
         }
         #large-play-button svg {
-            width: 100px;
-            height: 100px;
+            width: 80px;
+            height: 80px;
         }
     </style>
 </head>
@@ -66,37 +78,51 @@
     <div id="background"></div>
     <div id="content">
         <div id="player"></div>
-        <button id="pause-button" onclick="togglePause()">
-            <svg viewBox="0 0 24 24"><rect x="5" y="4" width="4" height="16"></rect><rect x="15" y="4" width="4" height="16"></rect></svg>
+        <div id="overlay-permanent"></div>
+        <div id="overlay-paused"></div>
+        <button id="pause-button" class="control-button" onclick="togglePause()">
+            <svg id="pause-icon" viewBox="0 0 24 24">
+                <rect x="6" y="4" width="4" height="16"></rect>
+                <rect x="14" y="4" width="4" height="16"></rect>
+            </svg>
         </button>
-        <button id="start-button" onclick="startVideo()">
-            <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"></polygon></svg>
+        <button id="start-button" class="control-button" onclick="startVideo()">
+            <svg viewBox="0 0 24 24">
+                <polygon points="6,4 20,12 6,20"></polygon>
+            </svg>
         </button>
-        <button id="large-play-button" onclick="startVideo()">
-            <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"></polygon></svg>
+        <button id="large-play-button" class="control-button" onclick="startVideo()">
+            <svg viewBox="0 0 24 24">
+                <polygon points="6,4 20,12 6,20"></polygon>
+            </svg>
         </button>
     </div>
 
     <script>
         var player;
+        var videoStarted = false;
+
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('player', {
                 videoId: 'AaayAuLZkmk',
-                playerVars: {
-                    'autoplay': 1,
-                    'controls': 0,
-                    'mute': 1,
-                    'fs': 1,
-                    'modestbranding': 1,
-                    'rel': 0,
-                    'iv_load_policy': 3,
-                    'playsinline': 1
-                },
-                events: {
-                    'onReady': onPlayerReady,
-                    'onStateChange': onPlayerStateChange
-                }
+                playerVars: { 'autoplay': 1, 'controls': 0, 'mute': 1, 'playsinline': 1 },
+                events: { 'onReady': onPlayerReady, 'onStateChange': onPlayerStateChange }
             });
+        }
+
+        function onPlayerReady(event) {
+            event.target.playVideo();
+            player.unMute();
+            videoStarted = true;
+            document.getElementById('pause-button').style.display = 'block';
+        }
+
+        function onPlayerStateChange(event) {
+            if (event.data === YT.PlayerState.PAUSED) {
+                document.getElementById('pause-icon').innerHTML = '<polygon points="6,4 20,12 6,20"></polygon>';
+            } else if (event.data === YT.PlayerState.PLAYING) {
+                document.getElementById('pause-icon').innerHTML = '<rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>';
+            }
         }
 
         function togglePause() {
@@ -110,6 +136,9 @@
         function startVideo() {
             player.playVideo();
             player.unMute();
+            videoStarted = true;
+            document.getElementById('start-button').style.display = 'none';
+            document.getElementById('large-play-button').style.display = 'none';
         }
     </script>
     <script src="https://www.youtube.com/iframe_api"></script>
