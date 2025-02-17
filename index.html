@@ -59,7 +59,7 @@
         .control-button {
             position: absolute;
             bottom: 20px;
-            left: 20px;
+            left: calc(20px + 10mm); /* 10 millimeters to the right */
             background: none;
             border: none;
             cursor: pointer;
@@ -129,10 +129,4 @@
         function startVideo() {
             player.playVideo();
             player.unMute();
-            videoStarted = true;
-            document.getElementById('start-button').style.display = 'none';
-        }
-    </script>
-    <script src="https://www.youtube.com/iframe_api"></script>
-</body>
-</html>
+            videoStarted = ▋
