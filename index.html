@@ -65,20 +65,6 @@
             border: none;
             z-index: 3;
         }
-        .control-button {
-            position: absolute;
-            bottom: 20px;
-            left: calc(20px + 2%);
-            background: none;
-            border: none;
-            cursor: pointer;
-            z-index: 6;
-        }
-        .control-button svg {
-            width: 45px;
-            height: 45px;
-            fill: red;
-        }
         #start-button {
             display: block;
             background: white;
@@ -99,12 +85,6 @@
         <div id="overlay-paused">
             <button id="start-button" onclick="startVideo()">Start Video</button>
         </div>
-        <button id="pause-button" class="control-button" onclick="togglePause()" style="display: none;">
-            <svg id="pause-icon" viewBox="0 0 24 24">
-                <rect x="6" y="4" width="4" height="16"></rect>
-                <rect x="14" y="4" width="4" height="16"></rect>
-            </svg>
-        </button>
     </div>
 
     <script>
@@ -139,7 +119,6 @@
                 player.unMute();
             }, 1000);
             videoStarted = true;
-            document.getElementById('pause-button').style.display = 'block';
             document.getElementById('overlay-paused').style.display = 'none';
         }
 
@@ -147,21 +126,11 @@
             if (event.data === YT.PlayerState.ENDED) {
                 window.location.href = "https://forms.office.com/r/75jdBjwfDw";
             } else if (event.data === YT.PlayerState.PAUSED) {
-                document.getElementById('pause-icon').innerHTML = '<polygon points="6,4 20,12 6,20"></polygon>';
                 document.getElementById('overlay-paused').style.display = 'flex'; // Show black overlay on pause
             } else if (event.data === YT.PlayerState.PLAYING) {
-                document.getElementById('pause-icon').innerHTML = '<rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>';
                 setTimeout(() => {
                     document.getElementById('overlay-paused').style.display = 'none';
                 }, 75);
-            }
-        }
-
-        function togglePause() {
-            if (player.getPlayerState() === YT.PlayerState.PLAYING) {
-                player.pauseVideo();
-            } else {
-                player.playVideo();
             }
         }
 
@@ -171,7 +140,9 @@
                 player.unMute();
             }
             videoStarted = true;
-            document.getElementById('overlay-paused').style.display = 'none';
+            setTimeout(() => {
+                document.getElementById('overlay-paused').style.display = 'none';
+            }, 75);
         }
     </script>
     <script src="https://www.youtube.com/iframe_api"></script>
