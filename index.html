@@ -66,8 +66,8 @@
             z-index: 6;
         }
         .control-button svg {
-            width: 45px;
-            height: 45px;
+            width: 45px; /* Changed from 50px to 45px */
+            height: 45px; /* Changed from 50px to 45px */
             fill: red;
         }
     </style>
@@ -98,7 +98,7 @@
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('player', {
                 videoId: 'AaayAuLZkmk',
-                playerVars: { 'autoplay': 1, 'controls': 0, 'mute': 1, 'playsinline': 1, 'rel': 0 },
+                playerVars: { 'autoplay': 1, 'controls': 0, 'mute': 1, 'playsinline': 1, 'rel': 0, 'modestbranding': 1 },
                 events: { 'onReady': onPlayerReady, 'onStateChange': onPlayerStateChange }
             });
         }
