@@ -36,9 +36,14 @@
         #overlay-paused {
             display: none;
             background: black;
-            height: 25%;  /* Covers only the bottom 25% */
+            height: 25%;
             bottom: 0;
             z-index: 5;
+            position: absolute;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         #content {
             position: relative;
@@ -76,16 +81,13 @@
         }
         #start-button {
             display: block;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
             background: white;
             border: none;
             padding: 10px 20px;
             font-size: 16px;
             cursor: pointer;
             z-index: 10;
+            position: relative;
         }
     </style>
 </head>
@@ -94,14 +96,15 @@
     <div id="content">
         <div id="player"></div>
         <div id="overlay-permanent"></div>
-        <div id="overlay-paused"></div>
+        <div id="overlay-paused">
+            <button id="start-button" onclick="startVideo()">Start Video</button>
+        </div>
         <button id="pause-button" class="control-button" onclick="togglePause()" style="display: none;">
             <svg id="pause-icon" viewBox="0 0 24 24">
                 <rect x="6" y="4" width="4" height="16"></rect>
                 <rect x="14" y="4" width="4" height="16"></rect>
             </svg>
         </button>
-        <button id="start-button" onclick="startVideo()">Start Video</button>
     </div>
 
     <script>
@@ -137,7 +140,7 @@
             }, 1000);
             videoStarted = true;
             document.getElementById('pause-button').style.display = 'block';
-            document.getElementById('start-button').style.display = 'none';
+            document.getElementById('overlay-paused').style.display = 'none';
         }
 
         function onPlayerStateChange(event) {
@@ -145,11 +148,9 @@
                 window.location.href = "https://forms.office.com/r/75jdBjwfDw";
             } else if (event.data === YT.PlayerState.PAUSED) {
                 document.getElementById('pause-icon').innerHTML = '<polygon points="6,4 20,12 6,20"></polygon>';
-                document.getElementById('overlay-paused').style.display = 'block'; // Show black overlay on pause
+                document.getElementById('overlay-paused').style.display = 'flex'; // Show black overlay on pause
             } else if (event.data === YT.PlayerState.PLAYING) {
                 document.getElementById('pause-icon').innerHTML = '<rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>';
-                
-                // Delay removing the overlay by 0.3s to block the "More Videos" momentarily
                 setTimeout(() => {
                     document.getElementById('overlay-paused').style.display = 'none';
                 }, 75);
@@ -170,8 +171,7 @@
                 player.unMute();
             }
             videoStarted = true;
-            document.getElementById('start-button').style.display = 'none';
-            document.getElementById('pause-button').style.display = 'block';
+            document.getElementById('overlay-paused').style.display = 'none';
         }
     </script>
     <script src="https://www.youtube.com/iframe_api"></script>
