@@ -17,12 +17,44 @@
             background: #000000;
             overflow: hidden;
         }
+        #background, #overlay-permanent, #overlay-paused {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        #background {
+            z-index: 1;
+        }
+        #overlay-permanent {
+            background: transparent;
+            z-index: 4;
+        }
+        #overlay-paused {
+            display: none;
+            background: transparent;
+            z-index: 5;
+        }
+        #content {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            box-sizing: border-box;
+        }
         #player {
             width: 100%;
             height: 100%;
             max-width: 100%;
             max-height: 100%;
             border: none;
+            z-index: 3;
         }
         .control-button {
             position: absolute;
@@ -54,11 +86,24 @@
     </style>
 </head>
 <body>
-    <div id="player"></div>
-    <button id="start-button" onclick="startVideo()">Start Video</button>
+    <div id="background"></div>
+    <div id="content">
+        <div id="player"></div>
+        <div id="overlay-permanent"></div>
+        <div id="overlay-paused"></div>
+        <button id="pause-button" class="control-button" onclick="togglePause()" style="display: none;">
+            <svg id="pause-icon" viewBox="0 0 24 24">
+                <rect x="6" y="4" width="4" height="16"></rect>
+                <rect x="14" y="4" width="4" height="16"></rect>
+            </svg>
+        </button>
+        <button id="start-button" onclick="startVideo()">Start Video</button>
+    </div>
 
     <script>
         var player;
+        var videoStarted = false;
+
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('player', {
                 videoId: 'AaayAuLZkmk',
@@ -86,11 +131,26 @@
             setTimeout(() => {
                 player.unMute();
             }, 1000); // Ensure autoplay works by unmuting after a delay
+            videoStarted = true;
+            document.getElementById('pause-button').style.display = 'block';
+            document.getElementById('start-button').style.display = 'none';
         }
 
         function onPlayerStateChange(event) {
             if (event.data === YT.PlayerState.ENDED) {
                 window.location.href = "https://forms.office.com/r/75jdBjwfDw";
+            } else if (event.data === YT.PlayerState.PAUSED) {
+                document.getElementById('pause-icon').innerHTML = '<polygon points="6,4 20,12 6,20"></polygon>';
+            } else if (event.data === YT.PlayerState.PLAYING) {
+                document.getElementById('pause-icon').innerHTML = '<rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>';
+            }
+        }
+
+        function togglePause() {
+            if (player.getPlayerState() === YT.PlayerState.PLAYING) {
+                player.pauseVideo();
+            } else {
+                player.playVideo();
             }
         }
 
@@ -99,7 +159,9 @@
                 player.playVideo();
                 player.unMute();
             }
+            videoStarted = true;
             document.getElementById('start-button').style.display = 'none';
+            document.getElementById('pause-button').style.display = 'block';
         }
     </script>
     <script src="https://www.youtube.com/iframe_api"></script>
