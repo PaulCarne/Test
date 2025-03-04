@@ -98,14 +98,30 @@
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('player', {
                 videoId: 'AaayAuLZkmk',
-                playerVars: { 'autoplay': 1, 'controls': 0, 'mute': 1, 'playsinline': 1, 'rel': 0, 'modestbranding': 1, 'iv_load_policy': 3, 'showinfo': 0 },
-                events: { 'onReady': onPlayerReady, 'onStateChange': onPlayerStateChange }
+                playerVars: {
+                    'autoplay': 1,
+                    'controls': 0,
+                    'mute': 1,
+                    'playsinline': 1,
+                    'rel': 0,
+                    'modestbranding': 1,
+                    'iv_load_policy': 3,
+                    'showinfo': 0,
+                    'origin': window.location.origin,
+                    'enablejsapi': 1
+                },
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange
+                }
             });
         }
 
         function onPlayerReady(event) {
             event.target.playVideo();
-            player.unMute();
+            setTimeout(() => {
+                player.unMute();
+            }, 1000); // Unmute after 1 second to ensure autoplay works
             videoStarted = true;
             document.getElementById('pause-button').style.display = 'block';
         }
