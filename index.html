@@ -65,6 +65,20 @@
             border: none;
             z-index: 3;
         }
+        .control-button {
+            position: absolute;
+            bottom: 20px;
+            left: calc(20px + 2%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            z-index: 6;
+        }
+        .control-button svg {
+            width: 45px;
+            height: 45px;
+            fill: red;
+        }
         #start-button {
             display: block;
             background: white;
@@ -85,6 +99,12 @@
         <div id="overlay-paused">
             <button id="start-button" onclick="startVideo()">Start Video</button>
         </div>
+        <button id="pause-button" class="control-button" onclick="togglePause()" style="display: none;">
+            <svg id="pause-icon" viewBox="0 0 24 24">
+                <rect x="6" y="4" width="4" height="16"></rect>
+                <rect x="14" y="4" width="4" height="16"></rect>
+            </svg>
+        </button>
     </div>
 
     <script>
@@ -120,17 +140,26 @@
             }, 1000);
             videoStarted = true;
             document.getElementById('overlay-paused').style.display = 'none';
+            document.getElementById('pause-button').style.display = 'block';
         }
 
         function onPlayerStateChange(event) {
             if (event.data === YT.PlayerState.ENDED) {
                 window.location.href = "https://forms.office.com/r/75jdBjwfDw";
             } else if (event.data === YT.PlayerState.PAUSED) {
-                document.getElementById('overlay-paused').style.display = 'flex'; // Show black overlay on pause
+                document.getElementById('overlay-paused').style.display = 'flex';
             } else if (event.data === YT.PlayerState.PLAYING) {
                 setTimeout(() => {
                     document.getElementById('overlay-paused').style.display = 'none';
                 }, 75);
+            }
+        }
+
+        function togglePause() {
+            if (player.getPlayerState() === YT.PlayerState.PLAYING) {
+                player.pauseVideo();
+            } else {
+                player.playVideo();
             }
         }
 
@@ -143,6 +172,7 @@
             setTimeout(() => {
                 document.getElementById('overlay-paused').style.display = 'none';
             }, 75);
+            document.getElementById('pause-button').style.display = 'block';
         }
     </script>
     <script src="https://www.youtube.com/iframe_api"></script>
