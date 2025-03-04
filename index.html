@@ -19,21 +19,25 @@
         }
         #background, #overlay-permanent, #overlay-paused {
             position: absolute;
-            top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
         }
         #background {
             z-index: 1;
+            top: 0;
+            height: 100%;
         }
         #overlay-permanent {
             background: transparent;
             z-index: 4;
+            top: 0;
+            height: 100%;
         }
         #overlay-paused {
             display: none;
             background: black;
+            height: 25%;  /* Covers only the bottom 25% */
+            bottom: 0;
             z-index: 5;
         }
         #content {
@@ -112,7 +116,7 @@
                     'controls': 0,
                     'mute': 1,
                     'playsinline': 1,
-                    'rel': 0, // Still prevents unrelated videos but not the overlay
+                    'rel': 0,
                     'modestbranding': 1,
                     'iv_load_policy': 3,
                     'showinfo': 0,
@@ -130,7 +134,7 @@
             event.target.playVideo();
             setTimeout(() => {
                 player.unMute();
-            }, 1000); // Ensure autoplay works by unmuting after a delay
+            }, 1000);
             videoStarted = true;
             document.getElementById('pause-button').style.display = 'block';
             document.getElementById('start-button').style.display = 'none';
@@ -141,10 +145,14 @@
                 window.location.href = "https://forms.office.com/r/75jdBjwfDw";
             } else if (event.data === YT.PlayerState.PAUSED) {
                 document.getElementById('pause-icon').innerHTML = '<polygon points="6,4 20,12 6,20"></polygon>';
-                document.getElementById('overlay-paused').style.display = 'block'; // Cover video when paused
+                document.getElementById('overlay-paused').style.display = 'block'; // Show black overlay on pause
             } else if (event.data === YT.PlayerState.PLAYING) {
                 document.getElementById('pause-icon').innerHTML = '<rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>';
-                document.getElementById('overlay-paused').style.display = 'none'; // Hide overlay when playing
+                
+                // Delay removing the overlay by 0.3s to block the "More Videos" momentarily
+                setTimeout(() => {
+                    document.getElementById('overlay-paused').style.display = 'none';
+                }, 300);
             }
         }
 
