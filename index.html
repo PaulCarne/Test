@@ -33,7 +33,7 @@
         }
         #overlay-paused {
             display: none;
-            background: transparent;
+            background: black;
             z-index: 5;
         }
         #content {
@@ -112,7 +112,7 @@
                     'controls': 0,
                     'mute': 1,
                     'playsinline': 1,
-                    'rel': 0,
+                    'rel': 0, // Still prevents unrelated videos but not the overlay
                     'modestbranding': 1,
                     'iv_load_policy': 3,
                     'showinfo': 0,
@@ -141,8 +141,10 @@
                 window.location.href = "https://forms.office.com/r/75jdBjwfDw";
             } else if (event.data === YT.PlayerState.PAUSED) {
                 document.getElementById('pause-icon').innerHTML = '<polygon points="6,4 20,12 6,20"></polygon>';
+                document.getElementById('overlay-paused').style.display = 'block'; // Cover video when paused
             } else if (event.data === YT.PlayerState.PLAYING) {
                 document.getElementById('pause-icon').innerHTML = '<rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>';
+                document.getElementById('overlay-paused').style.display = 'none'; // Hide overlay when playing
             }
         }
 
