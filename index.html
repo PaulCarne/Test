@@ -8,455 +8,440 @@
 <title>Watch the Video</title>
 
 <style>
-  body{
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
-    margin:0;
-    text-align:center;
-    background:#000000;
-    overflow:hidden;
-  }
 
-  #background,#overlay-permanent,#overlay-paused{
-    position:absolute;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-  }
+body{
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+margin:0;
+text-align:center;
+background:#000000;
+overflow:hidden;
+}
 
-  #background{z-index:1;}
-  #overlay-permanent{background:transparent;z-index:4;}
-  #overlay-paused{display:none;background:transparent;z-index:5;}
+#background,#overlay-permanent,#overlay-paused{
+position:absolute;
+top:0;
+left:0;
+width:100%;
+height:100%;
+}
 
-  #content{
-    position:relative;
-    z-index:2;
-    width:100%;
-    height:100%;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    padding:10px;
-    box-sizing:border-box;
-  }
+#background{z-index:1;}
+#overlay-permanent{background:transparent;z-index:4;}
+#overlay-paused{display:none;background:transparent;z-index:5;}
 
-  #player{
-    width:100%;
-    height:100%;
-    max-width:100%;
-    max-height:100%;
-    border:none;
-    z-index:3;
-  }
+#content{
+position:relative;
+z-index:2;
+width:100%;
+height:100%;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+padding:10px;
+box-sizing:border-box;
+}
 
-  /* Progress bar (line) */
-  #progress-container{
-    position:absolute;
-    left: clamp(12px, 2vw, 24px);
-    right: clamp(12px, 2vw, 24px);
-    bottom: clamp(10px, 1.6vh, 18px);
-    height: 4px;
-    border-radius: 999px;
-    background: rgba(255,255,255,0.25);
-    z-index: 6;
-    pointer-events: none; /* don't block taps */
-    overflow: hidden;
-  }
+#player{
+width:100%;
+height:100%;
+max-width:100%;
+max-height:100%;
+border:none;
+z-index:3;
+}
 
-  #progress-bar{
-    height: 100%;
-    width: 0%;
-    background: rgba(255,255,255,0.9);
-    border-radius: 999px;
-    transform-origin: left center;
-  }
+/* warning message */
 
-  /* PLAY / PAUSE BUTTON */
-  .button{
-    font-size:180%;
-    position:absolute;
-    bottom:20px;
-    left:clamp(30px,4vw,60px);
-    border:1px solid transparent;
-    height:1em;
-    width:1em;
-    padding:.25em;
-    border-radius:50%;
-    transition:all 0.3s ease;
-    cursor:pointer;
-    z-index:7; /* above progress bar */
-    opacity:1;
-  }
+#skip-warning{
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+background:rgba(0,0,0,0.85);
+color:#ffffff;
+padding:18px 28px;
+border-radius:8px;
+font-size:18px;
+z-index:9;
+border:2px solid #ff8c00;
 
-  /* hidden state */
-  .button.hidden{
-    opacity:0;
-    pointer-events:none;
-  }
+opacity:0;
+pointer-events:none;
+transition:opacity 0.4s ease;
+}
 
-  .button:before{
-    content:"";
-    position:absolute;
-    top:.25em;
-    left:.5em;
-    transition:all 0.25s ease;
-    border:.5em solid transparent;
-    border-right-width:0;
-    height:0;
-    width:0;
-  }
+#skip-warning.visible{
+opacity:1;
+}
 
-  .play{border-color:green;}
-  .play:before{border-left:.75em solid green;}
+/* progress bar */
 
-  .paused{
-    border-radius:5%;
-    border-color:red;
-  }
+#progress-container{
+position:absolute;
+left: clamp(12px, 2vw, 24px);
+right: clamp(12px, 2vw, 24px);
+bottom: clamp(10px, 1.6vh, 18px);
+height:4px;
+border-radius:999px;
+background: rgba(255,140,0,0.25);
+z-index:6;
+pointer-events:none;
+overflow:hidden;
+}
 
-  .paused:before{
-    border-width:0;
-    border-left:.4em solid red;
-    border-right:.4em solid red;
-    height:1em;
-    width:.2em;
-    left:.25em;
-  }
+#progress-bar{
+height:100%;
+width:0%;
+background:#ff8c00;
+border-radius:999px;
+transform-origin:left center;
+transition:width 0.1s linear;
+}
 
-  /* MOBILE */
-  @media screen and (max-width:768px){
-    .button{
-      bottom:calc(20px - 1%);
-      left:clamp(28px,6vw,50px);
-      width:30px;
-      height:30px;
-    }
+/* pulse animation */
 
-    #progress-container{
-      left: clamp(10px, 3vw, 18px);
-      right: clamp(10px, 3vw, 18px);
-      bottom: clamp(8px, 1.4vh, 14px);
-      height: 4px;
-    }
-  }
+@keyframes pausePulse{
+0%{opacity:0.6;}
+50%{opacity:1;}
+100%{opacity:0.6;}
+}
+
+.paused-progress{
+animation: pausePulse 1.2s infinite;
+}
+
+/* play pause button */
+
+.button{
+font-size:180%;
+position:absolute;
+bottom:20px;
+left:clamp(30px,4vw,60px);
+border:1px solid transparent;
+height:1em;
+width:1em;
+padding:.25em;
+border-radius:50%;
+transition:all 0.3s ease;
+cursor:pointer;
+z-index:7;
+opacity:1;
+}
+
+.button.hidden{
+opacity:0;
+pointer-events:none;
+}
+
+.button:before{
+content:"";
+position:absolute;
+top:.25em;
+left:.5em;
+transition:all 0.25s ease;
+border:.5em solid transparent;
+border-right-width:0;
+height:0;
+width:0;
+}
+
+.play{border-color:green;}
+.play:before{border-left:.75em solid green;}
+
+.paused{
+border-radius:5%;
+border-color:red;
+}
+
+.paused:before{
+border-width:0;
+border-left:.4em solid red;
+border-right:.4em solid red;
+height:1em;
+width:.2em;
+left:.25em;
+}
+
+@media screen and (max-width:768px){
+
+.button{
+bottom:calc(20px - 1%);
+left:clamp(28px,6vw,50px);
+width:30px;
+height:30px;
+}
+
+#progress-container{
+left: clamp(10px, 3vw, 18px);
+right: clamp(10px, 3vw, 18px);
+bottom: clamp(8px, 1.4vh, 14px);
+height:4px;
+}
+
+}
+
 </style>
 </head>
 
 <body>
+
 <div id="background"></div>
 
 <div id="content">
-  <div id="player"></div>
 
-  <div id="overlay-permanent"></div>
-  <div id="overlay-paused"></div>
+<div id="player"></div>
 
-  <!-- Progress line -->
-  <div id="progress-container" aria-hidden="true">
-    <div id="progress-bar"></div>
-  </div>
+<div id="overlay-permanent"></div>
+<div id="overlay-paused"></div>
 
-  <div class="button play" aria-label="Play/Pause Button"></div>
-
-  <button id="start-button" class="control-button" style="display:none;" aria-label="Start Video Button">
-    <svg viewBox="0 0 24 24">
-      <polygon points="6,4 20,12 6,20"></polygon>
-    </svg>
-  </button>
+<div id="skip-warning">
+You must watch the entire video before you can submit your details
 </div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<div id="progress-container">
+<div id="progress-bar"></div>
+</div>
+
+<div class="button play"></div>
+
+</div>
 
 <script>
-  var player;
-  var hideTimer;
 
-  var progressRafId = null;
-  var progressBarEl = null;
+var player;
+var hideTimer;
 
-  // =========================
-  // Skip-prevention + Resume
-  // =========================
+var progressBarEl;
+var progressRafId;
 
-  // Use a unique key per videoId so different inductions don't collide
-  var VIDEO_ID = 'OOv7NcgVRzk';
-  var STORAGE_KEY = 'yt_induction_' + VIDEO_ID;
+var maxWatchedTime=0;
+var STORAGE_KEY="videoProgress_OOv7NcgVRzk";
 
-  // Tuning parameters
-  var ENFORCE_INTERVAL_MS = 500;     // how often we check for illegal skips
-  var SAVE_INTERVAL_MS = 1000;       // how often we persist watch state
-  var SEEK_TOLERANCE_SEC = 1.5;      // allow small drift/buffer jumps
-  var RESUME_BACKOFF_SEC = 0.25;     // resume slightly earlier for smoother continuity
+/* controls */
 
-  var maxWatchedTime = 0;            // highest allowed watched point
-  var lastKnownTime = 0;             // last sampled time
-  var enforceTimer = null;
-  var saveTimer = null;
-  var isRestoring = true;            // prevents false skip detection during initial seek
+function showControls(){
 
-  function loadWatchState(){
-    try {
-      var raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return null;
-      return JSON.parse(raw);
-    } catch (e) {
-      return null;
-    }
-  }
+const button=document.querySelector('.button');
 
-  function saveWatchState(){
-    if (!player || typeof player.getCurrentTime !== 'function') return;
+button.classList.remove('hidden');
 
-    var t = player.getCurrentTime() || 0;
+clearTimeout(hideTimer);
 
-    // Persist the highest allowed point and last position
-    var state = {
-      t: t,
-      max: maxWatchedTime,
-      updatedAt: Date.now()
-    };
+hideTimer=setTimeout(()=>{
+button.classList.add('hidden');
+},3000);
 
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    } catch (e) {
-      // ignore storage failures
-    }
-  }
+}
 
-  function clearWatchState(){
-    try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
-  }
+/* warning */
 
-  function restoreWatchStateIfAny(){
-    var state = loadWatchState();
-    if (!state) {
-      isRestoring = false;
-      return;
-    }
+function showWarning(){
 
-    // Restore max watched first (safety cap)
-    if (typeof state.max === 'number' && isFinite(state.max)) {
-      maxWatchedTime = Math.max(0, state.max);
-    }
+var warning=document.getElementById("skip-warning");
 
-    // Restore last position, but never beyond maxWatchedTime
-    var resumeTime = 0;
-    if (typeof state.t === 'number' && isFinite(state.t)) {
-      resumeTime = Math.max(0, state.t - RESUME_BACKOFF_SEC);
-    }
+warning.classList.add("visible");
 
-    resumeTime = Math.min(resumeTime, maxWatchedTime);
+setTimeout(function(){
 
-    // If they've already completed it, start from beginning (optional)
-    // You could also redirect to the form here if desired.
-    if (maxWatchedTime > 0 && player.getDuration && player.getDuration() > 0) {
-      // keep as-is
-    }
+warning.classList.remove("visible");
 
-    // Seek after the player is ready
-    try {
-      if (resumeTime > 0.5) {
-        player.seekTo(resumeTime, true);
-        lastKnownTime = resumeTime;
-      }
-    } catch (e) {}
+},2000);
 
-    // Give it a moment before enforcement begins so we don't "snap back"
-    setTimeout(function(){
-      isRestoring = false;
-    }, 1200);
-  }
+}
 
-  function startEnforcement(){
-    stopEnforcement();
+/* progress */
 
-    enforceTimer = setInterval(function(){
-      if (!player || typeof player.getCurrentTime !== 'function') return;
+function updateProgress(){
 
-      var state = player.getPlayerState ? player.getPlayerState() : null;
-      var current = player.getCurrentTime() || 0;
+var duration=player.getDuration();
+var current=player.getCurrentTime();
 
-      // Update maxWatchedTime only when actually progressing in playback
-      // PLAYING (1) and BUFFERING (3) are the main ones where time can advance.
-      if (state === YT.PlayerState.PLAYING || state === YT.PlayerState.BUFFERING) {
-        if (current > maxWatchedTime) {
-          maxWatchedTime = current;
-        }
-      }
+if(duration>0){
 
-      // Skip prevention: allow rewind, block big forward jumps beyond maxWatchedTime
-      // Avoid enforcement during initial restore to prevent false positives.
-      if (!isRestoring) {
-        var illegalForward = current > (maxWatchedTime + SEEK_TOLERANCE_SEC);
+var pct=(current/duration)*100;
 
-        // Also detect sudden jumps forward compared to lastKnownTime
-        var jumpedForward = (current - lastKnownTime) > (ENFORCE_INTERVAL_MS / 1000) + SEEK_TOLERANCE_SEC;
+progressBarEl.style.width=pct+"%";
 
-        if (illegalForward || jumpedForward) {
-          // Snap back to maxWatchedTime (or slightly behind)
-          var snapTo = Math.max(0, maxWatchedTime - 0.1);
-          try { player.seekTo(snapTo, true); } catch (e) {}
-        }
-      }
+}
 
-      lastKnownTime = current;
-    }, ENFORCE_INTERVAL_MS);
+progressRafId=requestAnimationFrame(updateProgress);
 
-    saveTimer = setInterval(saveWatchState, SAVE_INTERVAL_MS);
-  }
+}
 
-  function stopEnforcement(){
-    if (enforceTimer) clearInterval(enforceTimer);
-    if (saveTimer) clearInterval(saveTimer);
-    enforceTimer = null;
-    saveTimer = null;
-  }
+/* enforcement */
 
-  // Save state on refresh/close
-  window.addEventListener('beforeunload', function(){
-    saveWatchState();
-  });
+function enforceRules(){
 
-  // =========================
-  // UI helpers (your controls)
-  // =========================
+var current=player.getCurrentTime();
 
-  function showControls(){
-    const button = document.querySelector('.button');
-    button.classList.remove('hidden');
+if(current>maxWatchedTime+1.5){
 
-    clearTimeout(hideTimer);
-    hideTimer = setTimeout(() => {
-      button.classList.add('hidden');
-    }, 3000);
-  }
+player.seekTo(maxWatchedTime,true);
 
-  function clampPercent(p){
-    if (!isFinite(p)) return 0;
-    return Math.max(0, Math.min(100, p));
-  }
+showWarning();
 
-  function updateProgress(){
-    if (!player || typeof player.getDuration !== 'function') {
-      progressRafId = requestAnimationFrame(updateProgress);
-      return;
-    }
+}
 
-    var duration = player.getDuration();
-    var current = player.getCurrentTime ? player.getCurrentTime() : 0;
+if(current>maxWatchedTime){
 
-    if (duration && duration > 0 && progressBarEl) {
-      var pct = clampPercent((current / duration) * 100);
-      progressBarEl.style.width = pct + '%';
-    }
+maxWatchedTime=current;
 
-    progressRafId = requestAnimationFrame(updateProgress);
-  }
+}
 
-  function startProgressLoop(){
-    if (!progressBarEl) progressBarEl = document.getElementById('progress-bar');
-    if (progressRafId) cancelAnimationFrame(progressRafId);
-    progressRafId = requestAnimationFrame(updateProgress);
-  }
+localStorage.setItem(STORAGE_KEY,maxWatchedTime);
 
-  function stopProgressLoop(){
-    if (progressRafId) cancelAnimationFrame(progressRafId);
-    progressRafId = null;
-  }
+if(player.getPlaybackRate()!==1){
 
-  // =========================
-  // YouTube Player
-  // =========================
+player.setPlaybackRate(1);
 
-  function onYouTubeIframeAPIReady(){
-    player = new YT.Player('player', {
-      videoId: VIDEO_ID,
-      playerVars: { 'autoplay': 1, 'controls': 0, 'mute': 1, 'playsinline': 1, 'rel': 0 },
-      events: { 'onReady': onPlayerReady, 'onStateChange': onPlayerStateChange }
-    });
-  }
+}
 
-  function onPlayerReady(event){
-    // Start playing, unmute (your original behaviour)
-    event.target.playVideo();
-    player.unMute();
+if(player.isMuted()){
 
-    // Restore resume + maxWatchedTime (then begin enforcement)
-    restoreWatchStateIfAny();
-    startEnforcement();
+player.unMute();
 
-    showControls();
-    startProgressLoop();
-  }
+}
 
-  function onPlayerStateChange(event){
-    if (event.data === YT.PlayerState.ENDED){
-      // Save completion state, then clear it (optional, but keeps next run clean)
-      saveWatchState();
-      clearWatchState();
+}
 
-      stopEnforcement();
-      stopProgressLoop();
+/* restore progress */
 
-      window.location.href = "https://forms.office.com/r/75jdBjwfDw";
-    }
-    else if (event.data === YT.PlayerState.PAUSED){
-      document.querySelector('.button').classList.remove('paused');
-      document.querySelector('.button').classList.add('play');
+function restoreProgress(){
 
-      // Still save state while paused (so refresh keeps position)
-      saveWatchState();
-      showControls();
-    }
-    else if (event.data === YT.PlayerState.PLAYING){
-      document.querySelector('.button').classList.remove('play');
-      document.querySelector('.button').classList.add('paused');
+var saved=parseFloat(localStorage.getItem(STORAGE_KEY));
 
-      showControls();
-    }
-  }
+if(saved && saved>0){
 
-  document.querySelector('.button').addEventListener('click', function(e){
-    // Prevent the "tap anywhere" listener from double-firing
-    e.stopPropagation();
+player.seekTo(saved-0.25,true);
 
-    showControls();
+maxWatchedTime=saved;
 
-    if (this.classList.contains('play')){
-      player.playVideo();
-      this.classList.remove('play');
-      this.classList.add('paused');
-    } else {
-      player.pauseVideo();
-      this.classList.remove('paused');
-      this.classList.add('play');
-    }
+}
 
-    // Save after user action
-    saveWatchState();
-  });
+}
 
-  // show controls when screen tapped (use #content rather than whole document)
-  document.getElementById('content').addEventListener('click', function(){
-    showControls();
-  });
+/* youtube player */
 
-  function onYouTubeIframeAPIError(event){
-    console.error('YouTube API Error:', event);
-  }
+function onYouTubeIframeAPIReady(){
 
-  document.addEventListener('DOMContentLoaded', function(){
-    progressBarEl = document.getElementById('progress-bar');
+player=new YT.Player('player',{
 
-    var tag = document.createElement('script');
-    tag.src = "https://www.youtube.com/iframe_api";
-    var firstScriptTag = document.getElementsByTagName('script')[0];
-    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-  });
+videoId:'OOv7NcgVRzk',
+
+playerVars:{
+'autoplay':1,
+'controls':0,
+'mute':1,
+'playsinline':1,
+'rel':0
+},
+
+events:{
+'onReady':onPlayerReady,
+'onStateChange':onPlayerStateChange
+}
+
+});
+
+}
+
+function onPlayerReady(event){
+
+event.target.playVideo();
+player.unMute();
+
+restoreProgress();
+
+showControls();
+
+progressBarEl=document.getElementById("progress-bar");
+
+progressRafId=requestAnimationFrame(updateProgress);
+
+setInterval(enforceRules,500);
+
+}
+
+function onPlayerStateChange(event){
+
+if(event.data===YT.PlayerState.ENDED){
+
+localStorage.removeItem(STORAGE_KEY);
+
+window.location.href="https://forms.office.com/r/75jdBjwfDw";
+
+}
+
+else if(event.data===YT.PlayerState.PAUSED){
+
+document.querySelector('.button').classList.remove('paused');
+document.querySelector('.button').classList.add('play');
+
+document.getElementById("progress-bar").classList.add("paused-progress");
+
+showControls();
+
+}
+
+else if(event.data===YT.PlayerState.PLAYING){
+
+document.querySelector('.button').classList.remove('play');
+document.querySelector('.button').classList.add('paused');
+
+document.getElementById("progress-bar").classList.remove("paused-progress");
+
+showControls();
+
+}
+
+}
+
+document.querySelector('.button').addEventListener('click',function(e){
+
+e.stopPropagation();
+
+showControls();
+
+if(this.classList.contains('play')){
+
+player.playVideo();
+this.classList.remove('play');
+this.classList.add('paused');
+
+}
+
+else{
+
+player.pauseVideo();
+this.classList.remove('paused');
+this.classList.add('play');
+
+}
+
+});
+
+document.getElementById('content').addEventListener('click',function(){
+
+showControls();
+
+});
+
+document.addEventListener('DOMContentLoaded',function(){
+
+var tag=document.createElement('script');
+
+tag.src="https://www.youtube.com/iframe_api";
+
+var firstScriptTag=document.getElementsByTagName('script')[0];
+
+firstScriptTag.parentNode.insertBefore(tag,firstScriptTag);
+
+});
+
 </script>
 
 </body>
