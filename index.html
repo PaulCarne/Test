@@ -191,60 +191,106 @@ body{
   animation:progressGlow 2.2s infinite;
 }
 
-/* pause pulse */
+/* pause pulse (enhanced glow) */
 @keyframes pausePulse{
-  0%{opacity:0.6;}
-  50%{opacity:1;}
-  100%{opacity:0.6;}
-}
-.paused-progress{
-  animation: pausePulse 1.2s infinite;
+  0%{
+    opacity:0.65;
+    box-shadow:0 0 4px rgba(255,140,0,0.4);
+  }
+  50%{
+    opacity:1;
+    box-shadow:0 0 14px rgba(255,140,0,1);
+  }
+  100%{
+    opacity:0.65;
+    box-shadow:0 0 4px rgba(255,140,0,0.4);
+  }
 }
 
-/* play/pause button */
+.paused-progress{
+  animation: pausePulse 1.2s infinite;
+  box-shadow:0 0 10px rgba(255,140,0,0.9);
+}
+
+/* play/pause button (more prominent) */
 .button{
-  font-size:180%;
+  font-size:200%;
   position:absolute;
   bottom:20px;
   left:clamp(30px,4vw,60px);
-  border:1px solid transparent;
-  height:1em;
-  width:1em;
-  padding:.25em;
+  height:1.3em;
+  width:1.3em;
+  padding:.3em;
   border-radius:50%;
-  transition:all 0.3s ease;
   cursor:pointer;
   z-index:7;
   opacity:1;
+
+  background:rgba(255,255,255,0.15);
+  border:2px solid rgba(255,255,255,0.9);
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+
+  box-shadow:0 0 12px rgba(0,0,0,0.6);
+  transition:all 0.25s ease;
 }
+
 .button.hidden{
   opacity:0;
   pointer-events:none;
 }
+
+/* icon */
 .button:before{
   content:"";
   position:absolute;
-  top:.25em;
-  left:.5em;
+  top:.3em;
+  left:.55em;
   transition:all 0.25s ease;
-  border:.5em solid transparent;
+  border:.55em solid transparent;
   border-right-width:0;
   height:0;
   width:0;
 }
-.play{border-color:green;}
-.play:before{border-left:.75em solid green;}
+
+/* play pulses gently */
+@keyframes playPulse{
+  0%{
+    transform:scale(1);
+    box-shadow:0 0 10px rgba(255,255,255,0.4);
+  }
+  50%{
+    transform:scale(1.08);
+    box-shadow:0 0 18px rgba(255,255,255,0.8);
+  }
+  100%{
+    transform:scale(1);
+    box-shadow:0 0 10px rgba(255,255,255,0.4);
+  }
+}
+
+.play{
+  border-color:#ffffff;
+  animation:playPulse 2.2s infinite ease-in-out;
+}
+.play:before{
+  border-left:.85em solid #ffffff;
+}
+
+/* paused icon */
 .paused{
-  border-radius:5%;
-  border-color:red;
+  border-radius:14%;
+  border-color:#ffffff;
+  animation:none;
 }
 .paused:before{
   border-width:0;
-  border-left:.4em solid red;
-  border-right:.4em solid red;
-  height:1em;
-  width:.2em;
-  left:.25em;
+  border-left:.35em solid #ffffff;
+  border-right:.35em solid #ffffff;
+  height:1.05em;
+  width:.25em;
+  left:.42em;
+  top:.28em;
 }
 
 /* When paused, move button into middle of black ribbon */
@@ -260,6 +306,8 @@ body{
     left:clamp(28px,6vw,50px);
     width:30px;
     height:30px;
+    font-size:185%;
+    padding:.25em;
   }
 
   #progress-container{
@@ -307,6 +355,7 @@ var progressRafId;
 var maxWatchedTime = 0;
 var STORAGE_KEY = "videoProgress_OOv7NcgVRzk";
 var fadeTriggered = false;
+var videoCompleted = false;
 
 function showControls(){
   const button = document.querySelector('.button');
@@ -345,7 +394,13 @@ function updateProgress(){
   var current = player.getCurrentTime();
 
   if (duration > 0){
-    progressBarEl.style.width = ((current/duration)*100) + "%";
+    var percent = (current/duration) * 100;
+    progressBarEl.style.width = percent + "%";
+
+    /* completion lock */
+    if (percent >= 98){
+      videoCompleted = true;
+    }
   }
 
   checkForEnding();
@@ -447,8 +502,11 @@ function onPlayerStateChange(event){
     showControls();
   }
   else if (event.data === YT.PlayerState.ENDED){
-    localStorage.removeItem(STORAGE_KEY);
-    window.location.href="https://forms.office.com/r/75jdBjwfDw";
+    /* completion lock prevents last-second refresh bypass */
+    if (videoCompleted){
+      localStorage.removeItem(STORAGE_KEY);
+      window.location.href="https://forms.office.com/r/75jdBjwfDw";
+    }
   }
 }
 
