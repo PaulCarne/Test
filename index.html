@@ -17,7 +17,7 @@ body{
   text-align:center;
   background:#000;
   overflow:hidden;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
 }
 
 #background,#overlay-permanent,#overlay-paused{
@@ -54,7 +54,7 @@ body{
   z-index:3;
 }
 
-/* subtle vignette to reduce “iframe” look */
+/* vignette */
 #vignette{
   position:absolute;
   inset:0;
@@ -63,7 +63,7 @@ body{
   background: radial-gradient(ellipse at center, rgba(0,0,0,0) 55%, rgba(0,0,0,0.6) 100%);
 }
 
-/* cover to hide youtube loading flash */
+/* cover to hide youtube flash */
 #player-cover{
   position:absolute;
   inset:0;
@@ -75,7 +75,7 @@ body{
 }
 #player-cover.hidden{ opacity:0; }
 
-/* mask to hide youtube recommendation banner */
+/* youtube recommendation mask */
 #youtube-mask{
   position:absolute;
   left:0;
@@ -88,64 +88,66 @@ body{
   pointer-events:none;
 }
 
-/* branded header chip */
+/* header badge (top right) */
 #brand-chip{
   position:absolute;
   top: clamp(12px, 2vh, 22px);
-  left: clamp(12px, 2vw, 22px);
+  right: clamp(12px, 2vw, 22px);
   z-index:8;
   pointer-events:none;
-  padding: 10px 14px;
-  border-radius: 999px;
-  background: rgba(0,0,0,0.55);
-  border: 1px solid rgba(255,140,0,0.55);
-  color: #fff;
-  font-size: 14px;
-  letter-spacing: 0.2px;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  padding:10px 14px;
+  border-radius:999px;
+  background:rgba(0,0,0,0.55);
+  border:1px solid rgba(255,140,0,0.55);
+  color:#fff;
+  font-size:14px;
+  letter-spacing:0.2px;
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
 }
+
+/* dot moved to the right */
 #brand-chip span{
   display:inline-block;
   width:10px;
   height:10px;
-  margin-right:10px;
+  margin-left:10px;
   border-radius:50%;
   background:#ff8c00;
   vertical-align:middle;
 }
 
-/* small hint */
+/* tap hint (top right under badge) */
 #tap-hint{
   position:absolute;
   top: clamp(54px, 8vh, 86px);
-  left: clamp(12px, 2vw, 22px);
+  right: clamp(12px, 2vw, 22px);
   z-index:8;
   pointer-events:none;
-  padding: 8px 12px;
-  border-radius: 10px;
-  background: rgba(0,0,0,0.55);
-  border: 1px solid rgba(255,255,255,0.15);
-  color: rgba(255,255,255,0.9);
-  font-size: 13px;
+  padding:8px 12px;
+  border-radius:10px;
+  background:rgba(0,0,0,0.55);
+  border:1px solid rgba(255,255,255,0.15);
+  color:rgba(255,255,255,0.9);
+  font-size:13px;
   opacity:0;
-  transform: translateY(-4px);
-  transition: opacity 0.4s ease, transform 0.4s ease;
+  transform:translateY(-4px);
+  transition:opacity 0.4s ease, transform 0.4s ease;
 }
 #tap-hint.visible{
   opacity:1;
-  transform: translateY(0);
+  transform:translateY(0);
 }
 
-/* fade overlay */
+/* fade overlay (hardened + ease-out) */
 #fade-overlay{
   position:absolute;
   inset:0;
   background:#000;
   opacity:0;
   pointer-events:none;
-  z-index:10;
-  transition:opacity 2s ease;
+  z-index:9999;
+  transition:opacity 2s ease-out;
 }
 #fade-overlay.visible{ opacity:1; }
 
@@ -181,6 +183,13 @@ body{
   pointer-events:none;
   overflow:hidden;
 }
+
+@keyframes progressGlow{
+  0%{box-shadow:0 0 2px rgba(255,140,0,0.4);}
+  50%{box-shadow:0 0 8px rgba(255,140,0,0.9);}
+  100%{box-shadow:0 0 2px rgba(255,140,0,0.4);}
+}
+
 #progress-bar{
   height:100%;
   width:0%;
@@ -188,15 +197,18 @@ body{
   border-radius:999px;
   transform-origin:left center;
   transition:width 0.1s linear;
+  animation:progressGlow 2.2s infinite;
 }
 
-/* pulse animation */
+/* pause pulse */
 @keyframes pausePulse{
   0%{opacity:0.6;}
   50%{opacity:1;}
   100%{opacity:0.6;}
 }
-.paused-progress{ animation: pausePulse 1.2s infinite; }
+.paused-progress{
+  animation: pausePulse 1.2s infinite;
+}
 
 /* play/pause button */
 .button{
@@ -213,10 +225,11 @@ body{
   cursor:pointer;
   z-index:7;
   opacity:1;
-  transform:none;
 }
-.button.hidden{ opacity:0; pointer-events:none; }
-
+.button.hidden{
+  opacity:0;
+  pointer-events:none;
+}
 .button:before{
   content:"";
   position:absolute;
@@ -228,11 +241,12 @@ body{
   height:0;
   width:0;
 }
-
 .play{border-color:green;}
 .play:before{border-left:.75em solid green;}
-
-.paused{ border-radius:5%; border-color:red; }
+.paused{
+  border-radius:5%;
+  border-color:red;
+}
 .paused:before{
   border-width:0;
   border-left:.4em solid red;
@@ -242,11 +256,11 @@ body{
   left:.25em;
 }
 
-/* When paused, move button into the middle of the black ribbon */
+/* When paused, move button into middle of black ribbon */
 .button.in-mask{
   left:50%;
   transform:translateX(-50%);
-  bottom:130px; /* ~middle of 260px ribbon */
+  bottom:130px;
 }
 
 @media screen and (max-width:768px){
@@ -265,11 +279,7 @@ body{
   }
 
   #youtube-mask{ height:320px; }
-
-  /* middle of 320px ribbon on mobile */
-  .button.in-mask{
-    bottom:160px;
-  }
+  .button.in-mask{ bottom:160px; }
 }
 </style>
 </head>
@@ -280,12 +290,11 @@ body{
 <div id="content">
   <div id="player"></div>
 
-  <!-- Custom “non-YouTube” look layers -->
   <div id="vignette"></div>
   <div id="player-cover"></div>
   <div id="youtube-mask"></div>
 
-  <div id="brand-chip"><span></span>Health and Safety Induction</div>
+  <div id="brand-chip">Health and Safety Induction<span></span></div>
   <div id="tap-hint">Tap anywhere to show controls</div>
 
   <div id="overlay-permanent"></div>
@@ -330,10 +339,12 @@ function showTapHint(){
 
 function checkForEnding(){
   if (!player || typeof player.getDuration !== 'function') return;
+
   var duration = player.getDuration() || 0;
   var current = player.getCurrentTime ? player.getCurrentTime() : 0;
 
-  if (duration > 0 && (duration - current) <= 3 && !fadeTriggered){
+  /* fade starts 2 seconds before end */
+  if (duration > 0 && (duration - current) <= 2 && !fadeTriggered){
     fadeTriggered = true;
     document.getElementById("fade-overlay").classList.add("visible");
   }
@@ -354,6 +365,7 @@ function updateProgress(){
 function enforceRules(){
   var current = player.getCurrentTime();
 
+  /* block skipping forward */
   if (current > maxWatchedTime + 1.5){
     player.seekTo(maxWatchedTime, true);
     showWarning();
@@ -365,10 +377,12 @@ function enforceRules(){
 
   localStorage.setItem(STORAGE_KEY, maxWatchedTime);
 
+  /* force 1x speed */
   if (player.getPlaybackRate && player.getPlaybackRate() !== 1){
     player.setPlaybackRate(1);
   }
 
+  /* force unmute */
   if (player.isMuted && player.isMuted()){
     player.unMute();
   }
@@ -440,7 +454,6 @@ function onPlayerStateChange(event){
 
     document.getElementById("progress-bar").classList.add("paused-progress");
     document.getElementById("youtube-mask").style.display = "block";
-
     showControls();
   }
   else if (event.data === YT.PlayerState.ENDED){
