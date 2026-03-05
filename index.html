@@ -212,7 +212,7 @@ body{
   box-shadow:0 0 10px rgba(255,140,0,0.9);
 }
 
-/* play/pause button (more prominent) */
+/* play/pause button */
 .button{
   font-size:200%;
   position:absolute;
@@ -225,12 +225,10 @@ body{
   cursor:pointer;
   z-index:7;
   opacity:1;
-
   background:rgba(255,255,255,0.15);
   border:2px solid rgba(255,255,255,0.9);
   backdrop-filter:blur(6px);
   -webkit-backdrop-filter:blur(6px);
-
   box-shadow:0 0 12px rgba(0,0,0,0.6);
   transition:all 0.25s ease;
 }
@@ -240,64 +238,62 @@ body{
   pointer-events:none;
 }
 
-/* icon */
+/* Base icon anchoring: always centered (prevents jump) */
 .button:before{
   content:"";
   position:absolute;
-  top:.3em;
-  left:.55em;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
   transition:all 0.25s ease;
-  border:.55em solid transparent;
-  border-right-width:0;
-  height:0;
-  width:0;
 }
 
 /* play pulses gently */
 @keyframes playPulse{
-  0%{
-    transform:scale(1);
-    box-shadow:0 0 10px rgba(255,255,255,0.4);
-  }
-  50%{
-    transform:scale(1.08);
-    box-shadow:0 0 18px rgba(255,255,255,0.8);
-  }
-  100%{
-    transform:scale(1);
-    box-shadow:0 0 10px rgba(255,255,255,0.4);
-  }
+  0%{ transform:scale(1); box-shadow:0 0 10px rgba(255,255,255,0.4); }
+  50%{ transform:scale(1.08); box-shadow:0 0 18px rgba(255,255,255,0.8); }
+  100%{ transform:scale(1); box-shadow:0 0 10px rgba(255,255,255,0.4); }
 }
 
+/* PLAY: white background + green triangle */
 .play{
+  background:#ffffff;
   border-color:#ffffff;
   animation:playPulse 2.2s infinite ease-in-out;
 }
+
+/* Triangle: centered and nudged slightly to look optically centered */
 .play:before{
-  border-left:.85em solid #ffffff;
+  transform:translate(-45%,-50%);
+  border:.55em solid transparent;
+  border-right-width:0;
+  border-left:.9em solid #1db954;
+  height:0;
+  width:0;
 }
 
-/* paused icon */
+/* PAUSED: red pause bars (no pulse) */
 .paused{
   border-radius:14%;
-  border-color:#ffffff;
+  border-color:#ff3b30;
+  background:rgba(0,0,0,0.35);
   animation:none;
 }
+
 .paused:before{
+  transform:translate(-50%,-50%);
   border-width:0;
-  border-left:.35em solid #ffffff;
-  border-right:.35em solid #ffffff;
+  border-left:.35em solid #ff3b30;
+  border-right:.35em solid #ff3b30;
   height:1.05em;
   width:.25em;
-  left:.42em;
-  top:.28em;
 }
 
 /* When paused, move button into middle of black ribbon */
 .button.in-mask{
   left:50%;
-  transform:translateX(-50%);
-  bottom:130px;
+  transform:translate(-50%,0);
+  bottom:140px;
 }
 
 @media screen and (max-width:768px){
@@ -318,7 +314,11 @@ body{
   }
 
   #youtube-mask{ height:320px; }
-  .button.in-mask{ bottom:160px; }
+
+  /* Centered in the larger mobile ribbon */
+  .button.in-mask{
+    bottom:180px;
+  }
 }
 </style>
 </head>
